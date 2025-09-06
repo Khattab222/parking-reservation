@@ -45,3 +45,54 @@ export interface Subscription {
     checkinAt: string;
   }[];
 }
+
+export interface TicketBreakdown {
+  from: string;
+  to: string;
+  hours: number;
+  rateMode: 'normal' | 'special';
+  rate: number;
+  amount: number;
+}
+
+export interface CheckoutResponse {
+  ticketId: string;
+  checkinAt: string;
+  checkoutAt: string;
+  durationHours: number;
+  breakdown: TicketBreakdown[];
+  amount: number;
+  zoneState: {
+    availableForSubscribers: number;
+availableForVisitors
+: number;
+categoryId:string
+free:number
+gateIds
+: string[]
+id
+: string
+name
+: 
+string
+occupied
+: 
+number
+open
+: 
+boolean
+rateNormal
+: 
+number
+rateSpecial
+: 
+number
+reserved
+: 
+number
+totalSlots
+: 
+number
+  };
+  subscriptionId?: string;
+}

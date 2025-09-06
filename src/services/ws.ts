@@ -36,7 +36,7 @@ type Callbacks = {
   onAdminUpdate: ((update: AdminUpdateMessage['payload']) => void) | null;
 };
 
-const BASE_URL = 'http://localhost:3000/api/v1/ws';
+const BASE_URL = 'ws://localhost:3000/api/v1/ws';
 let ws: WebSocket | null = null;
 let reconnectAttempts = 0;
 let currentGateId: string | null = null;

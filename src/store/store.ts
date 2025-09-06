@@ -1,12 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit'
 import gatesReducer from './slices/gatesSlice'
 import zonesReducer from './slices/zonesSlice'
+import authReducer from './slices/authSlice'
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
       gates: gatesReducer,
       zones: zonesReducer,
+      auth: authReducer,
     },
   })
 }

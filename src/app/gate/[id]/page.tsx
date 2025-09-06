@@ -94,7 +94,7 @@ function GatePage() {
   const checkinMutation = useMutation({
     mutationFn: createCheckin,
     onSuccess: (data) => {
-      console.log({ data });
+      
       setCurrentTicket(data.ticket);
       setShowGateAnimation(true);
       queryClient.setQueryData(['zones', gateId], (oldZones: Zone[] | undefined) => 

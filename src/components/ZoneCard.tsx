@@ -60,9 +60,16 @@ export default function ZoneCard({ zone, isSelected, onSelect, isSelectable }: Z
           <span className="font-medium">{zone.availableForSubscribers}</span>
         </div>
         <div className="flex justify-between">
-          <span>Rate:</span>
+          <span>Rate Normal:</span>
           <span className="font-medium">
-            ${zone.specialActive ? zone.rateSpecial : zone.rateNormal}/hr
+            ${ zone.rateNormal}/hr
+            {zone.specialActive && <span className="text-orange-600 ml-1">🔥</span>}
+          </span>
+        </div>
+        <div className="flex justify-between">
+          <span>Rate Special:</span>
+          <span className="font-medium">
+            ${ zone.rateSpecial}/hr
             {zone.specialActive && <span className="text-orange-600 ml-1">🔥</span>}
           </span>
         </div>
