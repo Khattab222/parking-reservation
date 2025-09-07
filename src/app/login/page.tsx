@@ -1,35 +1,10 @@
-// app/login/page.tsx
+
 'use client';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { UserIcon, LockClosedIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { login } from '@/store/slices/authSlice';
+import UseLogin from './UseLogin';
 
 export default function LoginPage() {
-  const router = useRouter();
-  const dispatch = useAppDispatch();
-  const { isAuthenticated, loading, error,user } = useAppSelector((state) => state.auth);
-  
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-
-useEffect(() => {
-  if (isAuthenticated) {
-    if (user?.role === 'admin') {
-      router.push('/admin');
-    } else {
-      router.push('/checkpoint');
-    }
-  }
-}, [isAuthenticated, user, router]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (username && password) {
-      dispatch(login({ username, password }));
-    }
-  };
+  const {error,handleSubmit,username,setUsername,password,setPassword,loading}=UseLogin()
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">

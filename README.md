@@ -32,4 +32,12 @@ A modern, real-time parking management system built with Next.js, Redux,tanstack
 1. **Clone the repository**
 ```bash
 git clone <repository-url>
+
+cd backend
+npm i 
+npm run start
+
+
 cd parking-reservation-system
+npm i 
+npm run dev
