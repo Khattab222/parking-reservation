@@ -1,7 +1,7 @@
 
 # first of all :
  i didn't found admin/users routes in backend 
-so i updated backend file and attach it file named backend so you should run it for admin/users work fine
+so i updated backend file and attach it file named back so you should run it for admin/users work fine
 
 
 // Admin get employees
@@ -52,7 +52,7 @@ A modern, real-time parking management system built with Next.js, Redux,tanstack
 ```bash
 git clone <repository-url>
 
-cd backend
+cd back
 npm i 
 npm run start
 
