@@ -3,7 +3,7 @@ import { Zone } from "@/types";
 
 interface ZoneCardProps {
   zone: Zone;
-  isSelected: boolean;
+  isSelected?: boolean;
   onSelect: (zoneId: string) => void;
   isSelectable: (zone: Zone) => boolean;
 }
@@ -18,6 +18,7 @@ export default function ZoneCard({ zone, isSelected, onSelect, isSelectable }: Z
             ? 'border-slate-200 bg-white hover:border-indigo-300 hover:shadow-md'
             : 'border-slate-200 bg-slate-50 opacity-60 cursor-not-allowed'
       }`}
+
       onClick={() => isSelectable(zone) && onSelect(zone.id)}
     >
       <div className="flex justify-between items-start mb-4">

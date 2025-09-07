@@ -17,10 +17,10 @@ export default function Header() {
     router.push('/login');
   };
 
-  // Don't show header on login page
-  if (pathname === '/login') {
-    return null;
-  }
+  // // Don't show header on login page
+  // if (pathname === '/login') {
+  //   return null;
+  // }
 
   return (
     <header className="bg-white shadow-sm border-b border-slate-200">

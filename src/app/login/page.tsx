@@ -9,16 +9,20 @@ import { login } from '@/store/slices/authSlice';
 export default function LoginPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { isAuthenticated, loading, error } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, loading, error,user } = useAppSelector((state) => state.auth);
   
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  useEffect(() => {
-    if (isAuthenticated) {
+useEffect(() => {
+  if (isAuthenticated) {
+    if (user?.role === 'admin') {
+      router.push('/admin');
+    } else {
       router.push('/checkpoint');
     }
-  }, [isAuthenticated, router]);
+  }
+}, [isAuthenticated, user, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

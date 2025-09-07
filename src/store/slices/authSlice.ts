@@ -18,7 +18,7 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  user: null,
+  user: typeof window !== 'undefined' ?  JSON.parse(localStorage.getItem('user') as string) : null,
   token: typeof window !== 'undefined' ? localStorage.getItem('token') : null,
   isAuthenticated: false,
   loading: false,
@@ -34,6 +34,7 @@ export const login = createAsyncThunk(
       
       // Store token in localStorage
       localStorage.setItem('token', token);
+      localStorage.setItem('user',JSON.stringify(user));
       
       // Set default authorization header
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
