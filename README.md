@@ -4,6 +4,25 @@
 so i updated backend file and attach it file named backend so you should run it for admin/users work fine
 
 
+// Admin get employees
+app.get(BASE + '/admin/users', (req, res) => {
+  const user = req.user;
+  if (!user || user.role !== 'admin') return res.status(403).json({ status:'error', message:'Forbidden' });
+  const users = db.users.filter(u => u.role === 'employee').map(u => ({ id: u.id, username: u.username, role: u.role }));
+  res.json(users);
+});
+// Admin add employees
+app.post(BASE + '/admin/users', (req, res) => {
+  const user = req.user;
+  if (!user || user.role !== 'admin') return res.status(403).json({ status:'error', message:'Forbidden' });
+  const { username, password, role } = req.body;
+  if (!username || !password || !role) return res.status(400).json({ status:'error', message:'Missing fields' });
+  const newUser = { id: 'user_' + uuidv4().split('-')[0], username, password, role };
+  db.users.push(newUser);
+  res.status(201).json(newUser);
+});
+
+
 # Parking Reservation System
 
 
