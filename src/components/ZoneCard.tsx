@@ -3,33 +3,36 @@ import { Zone } from "@/types";
 
 interface ZoneCardProps {
   zone: Zone;
-  isSelected?: boolean;
+  isSelected: boolean;
   onSelect: (zoneId: string) => void;
   isSelectable: (zone: Zone) => boolean;
 }
 
 export default function ZoneCard({ zone, isSelected, onSelect, isSelectable }: ZoneCardProps) {
+  const selectable = isSelectable(zone);
+  console.log({selectable})
+  
   return (
     <div 
       className={`p-6 rounded-xl border-2 transition-all duration-300 cursor-pointer ${
         isSelected 
           ? 'border-indigo-500 bg-indigo-50' 
-          : isSelectable(zone)
+          : selectable
             ? 'border-slate-200 bg-white hover:border-indigo-300 hover:shadow-md'
             : 'border-slate-200 bg-slate-50 opacity-60 cursor-not-allowed'
       }`}
-
-      onClick={() => isSelectable(zone) && onSelect(zone.id)}
+      onClick={() => selectable && onSelect(zone.id)}
     >
+    
       <div className="flex justify-between items-start mb-4">
         <div>
           <h3 className="text-lg font-semibold text-slate-900">{zone.name}</h3>
-          <p className="text-sm text-slate-500">{zone.categoryId}</p>
+          <p className="text-sm text-slate-500">Category: {zone.categoryId}</p>
         </div>
         <div className="flex items-center space-x-2">
           {zone.specialActive && (
             <span className="px-2 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-medium animate-pulse">
-              Special Rate
+              Special Rate Active
             </span>
           )}
           <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -39,6 +42,7 @@ export default function ZoneCard({ zone, isSelected, onSelect, isSelectable }: Z
           </span>
         </div>
       </div>
+
 
       <div className="grid grid-cols-2 gap-4 mb-4">
         <div className="text-center p-3 bg-slate-50 rounded-lg">
@@ -51,7 +55,11 @@ export default function ZoneCard({ zone, isSelected, onSelect, isSelectable }: Z
         </div>
       </div>
 
-      <div className="space-y-2 text-sm text-black">
+      <div className="space-y-2 text-sm text-gray-600">
+        <div className="flex justify-between">
+          <span>Reserved:</span>
+          <span className="font-medium">{zone.reserved}</span>
+        </div>
         <div className="flex justify-between">
           <span>Available for Visitors:</span>
           <span className="font-medium">{zone.availableForVisitors}</span>
@@ -61,17 +69,15 @@ export default function ZoneCard({ zone, isSelected, onSelect, isSelectable }: Z
           <span className="font-medium">{zone.availableForSubscribers}</span>
         </div>
         <div className="flex justify-between">
-          <span>Rate Normal:</span>
+          <span>RateSpecial:</span>
           <span className="font-medium">
-            ${ zone.rateNormal}/hr
-            {zone.specialActive && <span className="text-orange-600 ml-1">🔥</span>}
+            ${zone.rateSpecial}/hr
           </span>
         </div>
         <div className="flex justify-between">
-          <span>Rate Special:</span>
+          <span>RateNormal:</span>
           <span className="font-medium">
-            ${ zone.rateSpecial}/hr
-            {zone.specialActive && <span className="text-orange-600 ml-1">🔥</span>}
+            ${ zone.rateNormal}/hr
           </span>
         </div>
       </div>

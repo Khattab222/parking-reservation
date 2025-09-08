@@ -30,7 +30,7 @@ export interface Subscription {
   id: string;
   userName: string;
   active: boolean;
-  categories: string[];
+  category: string;
   cars: {
     plate: string;
     brand: string;

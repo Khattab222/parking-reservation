@@ -45,7 +45,7 @@ const { isLoading, zones, activeTab, setActiveTab,subscription, debouncedSubscri
         {/* Tabs */}
         <div className="flex space-x-1 bg-slate-100 p-1 rounded-lg mb-8 w-fit">
           <button
-            onClick={() => setActiveTab('visitor')}
+            onClick={() => {setActiveTab('visitor'); setSelectedZone(null);}}
             className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${
               activeTab === 'visitor'
                 ? 'bg-white text-indigo-600 shadow-sm'
@@ -56,7 +56,7 @@ const { isLoading, zones, activeTab, setActiveTab,subscription, debouncedSubscri
             Visitor
           </button>
           <button
-            onClick={() => setActiveTab('subscriber')}
+            onClick={() => {setActiveTab('subscriber'); setSelectedZone(null);}}
             className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${
               activeTab === 'subscriber'
                 ? 'bg-white text-indigo-600 shadow-sm'
@@ -94,7 +94,7 @@ const { isLoading, zones, activeTab, setActiveTab,subscription, debouncedSubscri
             )}
             
             {/* Show success */}
-            {subscription && !isSubscriptionLoading && (
+            {subscription&&subscription.active && !isSubscriptionLoading && (
               <div className="mt-4 p-4 bg-green-50 rounded-lg">
                 <p className="text-green-700">
                   Subscription verified for {subscription.userName}

@@ -1,4 +1,4 @@
-import { Subscription, Ticket, TicketResponse, Zone } from '@/types';
+import { Subscription, TicketResponse, Zone } from '@/types';
 
 const BASE_URL = 'http://localhost:3000/api/v1';
 

@@ -1,11 +1,7 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams } from 'next/navigation';
-import { UserGroupIcon, UsersIcon } from '@heroicons/react/24/outline';
-import { useQuery, useMutation, QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import ZoneCard from '@/components/ZoneCard';
-import GateHeader from '@/components/GateHeader';
-import TicketModal from '@/components/TicketModal';
-import GateAnimation from '@/components/GateAnimation';
+import { useQuery, useMutation, QueryClient } from '@tanstack/react-query';
+
 import { wsService } from '@/services/ws';
 import { getZonesByGateId, verifySubscription, createCheckin } from '@/services/api';
 import { Zone, Ticket } from '@/types';
@@ -101,30 +97,55 @@ const useDebounce = <T,>(value: T, delay: number): T => {
     }, []);
   
     // WebSocket setup
-    useEffect(() => {
-      wsService.connect();
-      wsService.onConnected(() => setIsConnected(true));
-      wsService.onDisconnected(() => setIsConnected(false));
-      wsService.subscribeToGate(gateId);
+   useEffect(() => {
+    // Connect to WebSocket and subscribe to gate
+    wsService.connect();
+    wsService.subscribeToGate(gateId);
+    
+    // Set up callbacks
+    wsService.onConnected(() => setIsConnected(true));
+    wsService.onDisconnected(() => setIsConnected(false));
+    
+    // Handle zone updates - Update UI directly without recalculation
+    wsService.onZoneUpdate((updatedZone) => {
+      console.log('Zone update received:', updatedZone);
       
-      wsService.onZoneUpdate((updatedZone) => {
-        queryClient.setQueryData(['zones', gateId], (oldZones: Zone[] | undefined) =>
-          oldZones?.map(z => z.id === updatedZone.id ? updatedZone : z)
+      // Update React Query cache with server payload directly
+      queryClient.setQueryData(['zones', gateId], (oldZones: Zone[] | undefined) => {
+        if (!oldZones) return oldZones;
+        return oldZones.map(zone => 
+          zone.id === updatedZone.id ? updatedZone : zone
         );
       });
-  
-      return () => {
-        wsService.unsubscribeFromGate(gateId);
-        wsService.disconnect();
-      };
-    }, [gateId]);
+    });
+    
+    // Handle admin updates
+    wsService.onAdminUpdate((adminUpdate) => {
+      console.log('Admin update received:', adminUpdate);
+      
+      // If admin update affects zones, refetch to ensure consistency
+      if (adminUpdate.targetType === 'zone' || adminUpdate.action === 'category-rates-changed') {
+        queryClient.invalidateQueries(['zones', gateId] as any);
+      }
+    });
+
+    // Cleanup
+    return () => {
+      wsService.unsubscribeFromGate(gateId);
+    };
+  }, [gateId]);
   
     // Update error state based on subscription status
     useEffect(() => {
       if (subscriptionError) {
         setError('Invalid subscription ID');
       } else if (subscription) {
-        setError(null);
+        if (subscription.active === false) {
+          setError("not active")
+        }else{
+
+          setError(null);
+        }
       } else if (debouncedSubscriptionId && !isSubscriptionLoading && !subscription) {
         setError('Please enter a valid subscription ID');
       }
@@ -132,6 +153,7 @@ const useDebounce = <T,>(value: T, delay: number): T => {
   
   
     const isZoneSelectable = useCallback((zone: Zone): boolean => {
+      console.log({subscription})
       if (!zone.open) return false;
       if (activeTab === 'visitor') {
         return zone.availableForVisitors > 0;
@@ -141,7 +163,7 @@ const useDebounce = <T,>(value: T, delay: number): T => {
         } else {
           return Boolean(
             subscription?.active &&
-            subscription?.categories?.includes(zone.categoryId) &&
+            subscription.category?.includes(zone.categoryId) &&
             zone.availableForSubscribers > 0
           );
         }

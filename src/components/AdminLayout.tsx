@@ -39,30 +39,30 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [auditLog, setAuditLog] = useState<AuditLogEntry[]>([]);
   const [showAuditLog, setShowAuditLog] = useState(false);
 
-useEffect(() => {
-  // Get admin ID from auth state
-  const adminId = user?.id || 'admin';
-  
-  // Connect WebSocket and subscribe to admin updates
-  wsService.connect();
-  wsService.subscribeToAdminUpdates(adminId);
-  
-  wsService.onAdminUpdate((update) => {
-    setAuditLog(prev => [{
-      ...update,
-      timestamp: update.timestamp || new Date().toISOString()
-    }, ...prev].slice(0, 10));
-  });
-  
-  wsService.onError((error) => {
-    console.error('WebSocket error in admin:', error);
-  });
 
-  return () => {
-    wsService.unsubscribeFromAdminUpdates(adminId);
-    // Don't disconnect here as other components might be using it
-  };
-}, [user?.id]);
+  useEffect(() => {
+    // Connect to single WebSocket instance
+    wsService.connect();
+    
+    // Listen for admin updates
+    wsService.onAdminUpdate((update) => {
+      console.log('Admin action received:', update);
+      
+      // Add to audit log
+      setAuditLog(prev => [
+        {
+          ...update,
+          timestamp: update.timestamp || new Date().toISOString()
+        },
+        ...prev.slice(0, 9) 
+      ]);
+    });
+
+  
+  }, []);
+
+
+
 
   const handleLogout = () => {
     dispatch(logout());

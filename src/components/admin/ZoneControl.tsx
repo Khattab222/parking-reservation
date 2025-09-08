@@ -6,27 +6,45 @@ import {
   LockClosedIcon,
 } from '@heroicons/react/24/outline';
 import { wsService } from "@/services/ws";
+import { useEffect } from "react";
 
 
 
 export default function ZoneControl({ zones }: { zones: any[] }) {
   const queryClient = useQueryClient();
+  useEffect(() => {
+    wsService.onAdminUpdate((update) => {
+      console.log('Admin update received in ZoneControl:', update);
+      
+      // If the update is about zones, invalidate our queries
+      if (update.targetType === 'zone') {
+        queryClient.invalidateQueries(['zones'] as any);
+        queryClient.invalidateQueries(['parking-state'] as any);
+      }
+    });
+  }, [queryClient]);
   
-  const toggleZoneMutation = useMutation({
+ const toggleZoneMutation = useMutation({
     mutationFn: async ({ zoneId, open }: { zoneId: string; open: boolean }) => {
       const response = await axios.put(`${API_BASE_URL}/admin/zones/${zoneId}/open`, { open });
-            console.log({data:response.data});
-              wsService.sendAdminAction({
-                  action: open ? 'zone-opened' : 'zone-closed',
-                  targetType: 'zone',
-                  targetId: zoneId,
-                  details: { open }
-                });
+      console.log('Zone toggle response:', response.data);
+
+      
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
+      // Invalidate relevant queries
       queryClient.invalidateQueries(['zones'] as any);
+      queryClient.invalidateQueries(['parking-state'] as any);
+      
+      // Optionally show a success notification
+      console.log(`Zone ${variables.zoneId} ${variables.open ? 'opened' : 'closed'} successfully`);
     },
+    onError: (error: any, variables) => {
+      // Handle errors
+      console.error('Failed to toggle zone:', error);
+      alert(`Failed to ${variables.open ? 'open' : 'close'} zone: ${error.response?.data?.message || error.message}`);
+    }
   });
 
   return (

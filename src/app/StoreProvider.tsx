@@ -1,8 +1,27 @@
 'use client'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { Provider } from 'react-redux'
 import { makeStore, AppStore } from '../store/store'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { wsService } from '@/services/ws'
+
+
+ function WebSocketProvider({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    // Establish single WebSocket connection on app mount
+    wsService.connect();
+    
+    // Cleanup on app unmount
+    return () => {
+      wsService.disconnect();
+    };
+  }, []);
+
+  return <>{children}</>;
+}
+
+
+
 
 export default function StoreProvider({
   children,
@@ -18,8 +37,10 @@ export default function StoreProvider({
 
   return <Provider store={storeRef.current}>
     <QueryClientProvider client={queryClient}>
+      <WebSocketProvider>
 
     {children}
+      </WebSocketProvider>
     </QueryClientProvider>
     </Provider>
 }
